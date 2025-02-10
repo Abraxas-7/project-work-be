@@ -1,0 +1,1 @@
+è solo per mostrare la cartella che se vuota non viene caricata su git
