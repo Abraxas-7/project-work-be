@@ -23,6 +23,7 @@ app.get("/", (req, res) => {
 
 //other routes
 app.use("/api/properties", properties);
+app.use("/api/reviews", reviews);
 
 app.use(errorsHandler);
 
