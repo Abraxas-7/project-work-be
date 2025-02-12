@@ -12,8 +12,11 @@ const corsPolicy = require("./middlewares/corsPolicy");
 
 const properties = require("./routes/properties");
 const reviews = require("./routes/reviews");
+const messages = require("./routes/messages");
 
 app.use(express.static("public"));
+
+app.use(express.json());
 
 app.use(corsPolicy);
 
@@ -23,7 +26,8 @@ app.get("/", (req, res) => {
 
 //other routes
 app.use("/api/properties", properties);
-app.use("/api/reviews", reviews);
+app.use("/api/properties/:id/reviews", reviews);
+app.use("/api/properties", messages);
 
 app.use(errorsHandler);
 

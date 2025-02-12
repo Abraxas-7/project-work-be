@@ -54,3 +54,40 @@ Assicurati di avere installato:
    ├── server.js          # Punto di ingresso
 
 ```
+
+## 📡 Utilizzo delle API
+
+Le API fornite permettono di interagire con il sistema per gestire le **proprietà**, i **messaggi** e le **recensioni**.
+
+### 1. **Immobili**
+
+### 2. **Recenzioni**
+
+### 3. **Messaggi**
+
+L'endpoint per inviare un messaggio relativo a una proprietà è:
+
+#### **POST /api/properties/:id/messages**
+
+- **Descrizione**: Permette agli utenti di inviare un messaggio riguardante una proprietà specifica.
+- **Parametro**: `:id` è l'ID della proprietà a cui si sta inviando il messaggio.
+
+#### **Esempio di Body della Richiesta**:
+
+```json
+{
+  "user_email": "utente@email.com",
+  "content": "Vorrei avere più informazioni su questa proprietà."
+}
+```
+
+#### **Esempio di Risposta**:
+
+```json
+{
+  "id_messages": 1,
+  "properties_id": "1",
+  "user_email": "utente@email.com",
+  "content": "Vorrei avere più informazioni su questa proprietà."
+}
+```
