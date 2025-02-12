@@ -6,7 +6,7 @@ PLAGIO AIRBNB
 
 - [Linguaggio di programmazione] : JAVASCRIPT
 - [Framework o librerie principali] : EXPRESS
-- [Database utilizzato] : ...
+- [Database utilizzato] : "db_bnb"
 
 ## 🔧 Prerequisiti
 
@@ -14,7 +14,7 @@ Assicurati di avere installato:
 
 - [Node.js]
 - [Database richiesto] : MySQL
-- [Dipendenze specifiche] : ...
+- [Dipendenze specifiche] : mysql2
 
 ## 🛠️ Installazione
 
@@ -59,9 +59,74 @@ Assicurati di avere installato:
 
 Le API fornite permettono di interagire con il sistema per gestire le **proprietà**, i **messaggi** e le **recensioni**.
 
-### 1. **Immobili**
+### 1. **Proprietà**
 
-### 2. **Recenzioni**
+### 2. **Recensioni**
+
+Endpoint per ottenere le recensioni (GET)
+
+#### **GET /api/properties/:id/reviews**
+
+- **Descrizione**: Permette di recuperare tutte le recensioni per una specifica proprietà.
+- **Parametro**: `:id` è l'ID della proprietà di cui si vogliono recuperare le recensioni.
+
+#### **Esempio di Risposta**:
+
+```json
+{
+  "totalCount": 2,
+  "data": [
+    {
+      "id_review": 1,
+      "properties_id": 1,
+      "comment": "Posto fantastico, tornerò sicuramente!",
+      "start_date": "2025-06-15",
+      "end_date": "2025-06-20",
+      "create_date": "2025-02-12T14:30:00.000Z"
+    },
+    {
+      "id_review": 2,
+      "properties_id": 1,
+      "comment": "Molto accogliente, ottimo soggiorno.",
+      "start_date": "2025-07-01",
+      "end_date": "2025-07-05",
+      "create_date": "2025-02-12T15:00:00.000Z"
+    }
+  ]
+}
+```
+
+---
+
+Endpoint per inviare una recensione (POST)
+
+#### **POST /api/properties/:id/reviews**
+
+- **Descrizione**: Permette agli utenti di inviare una recensione riguardante una proprietà specifica.
+- **Parametro**: `:id` è l'ID della proprietà a cui si sta inviando la recensione.
+
+#### **Esempio di Body della Richiesta**:
+
+```json
+{
+  "comment": "Posto fantastico, tornerò sicuramente!",
+  "start_date": "2025-06-15",
+  "end_date": "2025-06-20"
+}
+```
+
+#### **Esempio di Risposta**:
+
+```json
+{
+  "id_review": 42,
+  "properties_id": "1",
+  "comment": "Posto fantastico, tornerò sicuramente!",
+  "start_date": "2025-06-15",
+  "end_date": "2025-06-20",
+  "create_date": "2025-02-12T14:30:00.000Z"
+}
+```
 
 ### 3. **Messaggi**
 

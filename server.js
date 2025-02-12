@@ -26,7 +26,7 @@ app.get("/", (req, res) => {
 
 //other routes
 app.use("/api/properties", properties);
-app.use("/api/properties/:id/reviews", reviews);
+app.use("/api/properties", reviews);
 app.use("/api/properties", messages);
 
 app.use(errorsHandler);
