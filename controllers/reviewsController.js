@@ -2,70 +2,75 @@ const connection = require("../data/db");
 const CustomError = require("../classes/CustomError");
 
 function index(req, res) {
-  const query = "";
+  const { id } = req.params;
+  console.log("ID proprietà ricevuto:", id);
 
-  connection.query(query, (err, results) => {
-    if (err) {
-      throw new CustomError("Errore durante il recupero delle recensioni", 500);
-    }
-    const response = {
-      totalCount: results.length,
-      data: results,
-    };
-    res.json(response);
-  });
-}
+  if (!id) {
+    return res.status(400).json({ error: "Parametro 'id' mancante" });
+  }
 
-function show(req, res) {
-  const id = parseInt(req.params.id);
-  const query = "";
+  const query = `
+    SELECT * FROM reviews 
+    WHERE properties_id = ?
+  `;
 
   connection.query(query, [id], (err, results) => {
     if (err) {
-      throw new CustomError("Errore durante il recupero della recensione", 500);
+      console.error("Errore di query:", err);
+      return res
+        .status(500)
+        .json({ error: "Errore durante il recupero delle recensioni" });
     }
-    if (results.length === 0) {
-      throw new CustomError("La recensione non esiste", 404);
-    }
-    res.json({ success: true, item: results[0] });
+
+    res.json({
+      totalCount: results.length,
+      data: results,
+    });
   });
 }
 
 function store(req, res) {
-  const title = req.body.title;
-  const content = req.body.content;
-  const query = "";
+  const { id } = req.params;
+  console.log("ID proprietà ricevuto:", id);
 
-  connection.query(query, [title, content], (err, results) => {
-    if (err) {
-      throw new CustomError(
-        "Errore durante l'inserimento della recensione",
-        500
-      );
+  const { comment, start_date, end_date } = req.body;
+
+  if (!id || !comment || !start_date || !end_date) {
+    return res.status(400).json({
+      error: "Tutti i campi (comment, start_date, end_date) sono obbligatori",
+    });
+  }
+
+  const query = `
+    INSERT INTO reviews (properties_id, comment, start_date, end_date, create_date)
+    VALUES (?, ?, ?, ?, NOW())
+  `;
+
+  connection.query(
+    query,
+    [id, comment, start_date, end_date],
+    (err, results) => {
+      if (err) {
+        console.error("Errore di query:", err);
+        return res
+          .status(500)
+          .json(
+            new CustomError("Errore durante l'inserimento del messaggio", 500)
+          );
+      }
+
+      const newReview = {
+        id_review: results.insertId,
+        properties_id: id,
+        comment,
+        start_date,
+        end_date,
+        create_date: new Date().toISOString(),
+      };
+
+      res.status(201).json(newReview);
     }
-    const newItem = {
-      /* blabla */
-    };
-    res.status(201).json(newItem);
-  });
+  );
 }
 
-function destroy(req, res) {
-  const id = parseInt(req.params.id);
-  const query = "";
-
-  connection.query(query, [id], (err, results) => {
-    if (err) {
-      throw new CustomError(
-        "Errore durante l'eliminazione della recensione",
-        500
-      );
-    }
-    if (results.affectedRows === 0) {
-      throw new CustomError("La recensione non esiste", 404);
-    }
-    res.sendStatus(204);
-  });
-}
-
-module.exports = { index, show, store, destroy };
+module.exports = { index, store };

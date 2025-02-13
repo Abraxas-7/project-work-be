@@ -1,26 +1,15 @@
 const express = require("express");
 const router = express.Router();
 
-const {
-  index,
-  show,
-  store,
-  destroy,
-} = require("../controllers/reviewsController");
+const { index, store } = require("../controllers/reviewsController");
 
 //Rotte
 
 // Index - Read all
-router.get("/", index);
-
-// Show - Read one -
-router.get("/:id", show);
+router.get("/:id/reviews", index);
 
 //Store - Create
-router.post("/", store);
-
-// Destroy - Delete
-router.delete("/:id", destroy);
+router.post("/:id/reviews", store);
 
 //export router
 module.exports = router;
