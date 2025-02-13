@@ -116,6 +116,7 @@ Endpoint per ottenere una singola proprietà (GET)
 #### **GET /api/properties/:id**
 
 - **Descrizione**: Permette di recuperare una proprietà con tutte le sue immagini.
+- **Parametro**: `:id` è l'ID della proprietà di cui si vogliono recuperare le informazioni.
 
 ##### **Esempio di Risposta**:
 
@@ -296,3 +297,40 @@ L'endpoint per inviare un messaggio relativo a una proprietà è:
 ```
 
 ---
+
+### 4. **Likes**
+
+L'endpoint per inrementare i like di una pagina è:
+
+#### **Patch /api/properties/:id/likes**
+
+- **Descrizione**: Permette incrementare i likes di una proprietà.
+- **Parametro**: `:id` è l'ID della proprietà a cui si vole incrementare i likes.
+
+#### **Esempio prima della chiamata**:
+
+```json
+{
+  "likes": 100
+}
+```
+
+#### **Esempio dopo la chiamata**:
+
+```json
+{
+  "likes": 101
+}
+```
+
+**NOTE**  
+Ottimizzazione lato FE per non fare troppe richieste al server:
+
+- **Incremento Locale Immediato**  
+  Aggiorna il numero di like localmente al click, senza aspettare la risposta del server, per un feedback rapido all'utente.
+
+- **Invio della Richiesta al Server**  
+  Dopo l'aggiornamento locale, invia una richiesta `PATCH` al server per registrare l'incremento.
+
+- **Gestione degli Errori**  
+  Se la richiesta fallisce, il frontend può ripristinare il valore locale o ritentare l'invio fino a successo. (OPZIONALE)

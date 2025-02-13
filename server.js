@@ -13,6 +13,7 @@ const corsPolicy = require("./middlewares/corsPolicy");
 const properties = require("./routes/properties");
 const reviews = require("./routes/reviews");
 const messages = require("./routes/messages");
+const likes = require("./routes/likes");
 
 app.use(express.static("public"));
 
@@ -24,10 +25,13 @@ app.get("/", (req, res) => {
   res.send("Home Page");
 });
 
-//other routes
+//principal route
 app.use("/api/properties", properties);
+
+//other routes
 app.use("/api/properties", reviews);
 app.use("/api/properties", messages);
+app.use("/api/properties", likes);
 
 app.use(errorsHandler);
 

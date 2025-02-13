@@ -118,7 +118,7 @@ function store(req, res) {
         square_meters,
         contact_email,
         property_type,
-        like: 0,
+        likes: 0,
         adress_city,
         adress_road,
         adress_hick_town,
