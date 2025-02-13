@@ -2,69 +2,130 @@ const connection = require("../data/db");
 const CustomError = require("../classes/CustomError");
 
 function index(req, res) {
-  const query = "";
+  const query = `
+    SELECT p.*, 
+           (SELECT i.image_url FROM images i WHERE i.properties_id = p.id_properties LIMIT 1) AS first_image 
+    FROM properties p
+  `;
 
   connection.query(query, (err, results) => {
     if (err) {
-      throw new CustomError("Errore durante il recupero delle proprietà", 500);
+      return res
+        .status(500)
+        .json({ error: "Errore nel recupero delle proprietà" });
     }
-    const response = {
+
+    res.json({
       totalCount: results.length,
       data: results,
-    };
-    res.json(response);
+    });
   });
 }
 
 function show(req, res) {
-  const id = parseInt(req.params.id);
-  const query = "";
+  const { id } = req.params;
+
+  const query = `
+    SELECT p.*, 
+           JSON_ARRAYAGG(i.image_url) AS images 
+    FROM properties p
+    LEFT JOIN images i ON p.id_properties = i.properties_id
+    WHERE p.id_properties = ?
+    GROUP BY p.id_properties
+  `;
 
   connection.query(query, [id], (err, results) => {
     if (err) {
-      throw new CustomError("Errore durante il recupero della proprietà", 500);
+      return res
+        .status(500)
+        .json({ error: "Errore nel recupero della proprietà" });
     }
+
     if (results.length === 0) {
-      throw new CustomError("L'elemento non esiste", 404);
+      return res.status(404).json({ error: "Proprietà non trovata" });
     }
+
     res.json({ success: true, item: results[0] });
   });
 }
 
 function store(req, res) {
-  const title = req.body.title;
-  const query = "";
+  const {
+    title,
+    rooms,
+    beds,
+    bathrooms,
+    square_meters,
+    contact_email,
+    property_type,
+    adress_city,
+    adress_road,
+    adress_hick_town,
+  } = req.body;
 
-  connection.query(query, [title], (err, results) => {
-    if (err) {
-      throw new CustomError(
-        "Errore durante l'inserimento della proprietà",
-        500
-      );
+  if (
+    !title ||
+    !rooms ||
+    !beds ||
+    !bathrooms ||
+    !square_meters ||
+    !contact_email ||
+    !property_type ||
+    !adress_city ||
+    !adress_road ||
+    !adress_hick_town
+  ) {
+    return res.status(400).json({
+      error: "Tutti i campi sono obbligatori",
+    });
+  }
+
+  const query = `
+    INSERT INTO properties 
+      (title, rooms, beds, bathrooms, square_meters, contact_email, property_type, adress_city, adress_road, adress_hick_town) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+  `;
+
+  connection.query(
+    query,
+    [
+      title,
+      rooms,
+      beds,
+      bathrooms,
+      square_meters,
+      contact_email,
+      property_type,
+      adress_city,
+      adress_road,
+      adress_hick_town,
+    ],
+    (err, results) => {
+      if (err) {
+        console.error("Errore di query:", err);
+        return res
+          .status(500)
+          .json(
+            new CustomError("Errore durante l'inserimento del messaggio", 500)
+          );
+      }
+
+      const newItem = {
+        properties_id: results.insertId,
+        title,
+        rooms,
+        beds,
+        square_meters,
+        contact_email,
+        property_type,
+        like: 0,
+        adress_city,
+        adress_road,
+        adress_hick_town,
+      };
+
+      res.status(201).json(newItem);
     }
-    const newItem = {
-      /* blabla */
-    };
-    res.status(201).json(newItem);
-  });
+  );
 }
-
-function destroy(req, res) {
-  const id = parseInt(req.params.id);
-  const query = "";
-
-  connection.query(query, [id], (err, results) => {
-    if (err) {
-      throw new CustomError(
-        "Errore durante l'eliminazione della proprietà",
-        500
-      );
-    }
-    if (results.affectedRows === 0) {
-      throw new CustomError("L'elemento non esiste", 404);
-    }
-    res.sendStatus(204);
-  });
-}
-
-module.exports = { index, show, store, destroy };
+module.exports = { index, show, store };
