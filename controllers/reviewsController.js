@@ -33,22 +33,23 @@ function store(req, res) {
   const { id } = req.params;
   console.log("ID proprietà ricevuto:", id);
 
-  const { comment, start_date, end_date } = req.body;
+  const { user_name, review_content, start_date, end_date } = req.body;
 
-  if (!id || !comment || !start_date || !end_date) {
+  if (!id || !user_name || !review_content || !start_date || !end_date) {
     return res.status(400).json({
-      error: "Tutti i campi (comment, start_date, end_date) sono obbligatori",
+      error:
+        "Tutti i campi (user_name, review_content, start_date, end_date) sono obbligatori",
     });
   }
 
   const query = `
-    INSERT INTO reviews (properties_id, comment, start_date, end_date, create_date)
-    VALUES (?, ?, ?, ?, NOW())
+    INSERT INTO reviews (properties_id, user_name, review_content, start_date, end_date)
+    VALUES (?, ?, ?, ?, ?)
   `;
 
   connection.query(
     query,
-    [id, comment, start_date, end_date],
+    [id, user_name, review_content, start_date, end_date],
     (err, results) => {
       if (err) {
         console.error("Errore di query:", err);
@@ -62,7 +63,8 @@ function store(req, res) {
       const newReview = {
         id_review: results.insertId,
         properties_id: id,
-        comment,
+        user_name,
+        review_content,
         start_date,
         end_date,
         create_date: new Date().toISOString(),

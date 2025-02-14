@@ -216,7 +216,8 @@ Endpoint per ottenere le recensioni (GET)
     {
       "id_review": 1,
       "properties_id": 1,
-      "comment": "Posto fantastico, tornerò sicuramente!",
+      "user_name": "arbi",
+      "review_content": "Posto fantastico, tornerò sicuramente!",
       "start_date": "2025-06-15",
       "end_date": "2025-06-20",
       "create_date": "2025-02-12T14:30:00.000Z"
@@ -224,7 +225,8 @@ Endpoint per ottenere le recensioni (GET)
     {
       "id_review": 2,
       "properties_id": 1,
-      "comment": "Molto accogliente, ottimo soggiorno.",
+      "user_name": "arbi",
+      "review_content": "Posto fantastico, tornerò sicuramente!",
       "start_date": "2025-07-01",
       "end_date": "2025-07-05",
       "create_date": "2025-02-12T15:00:00.000Z"
@@ -246,7 +248,8 @@ Endpoint per inviare una recensione (POST)
 
 ```json
 {
-  "comment": "Posto fantastico, tornerò sicuramente!",
+  "user_name": "arbi",
+  "review_content": "Posto fantastico, tornerò sicuramente!",
   "start_date": "2025-06-15",
   "end_date": "2025-06-20"
 }
@@ -256,12 +259,13 @@ Endpoint per inviare una recensione (POST)
 
 ```json
 {
-  "id_review": 42,
+  "id_review": 9,
   "properties_id": "1",
-  "comment": "Posto fantastico, tornerò sicuramente!",
+  "user_name": "arbi",
+  "review_content": "Posto fantastico, tornerò sicuramente!",
   "start_date": "2025-06-15",
   "end_date": "2025-06-20",
-  "create_date": "2025-02-12T14:30:00.000Z"
+  "create_date": "2025-02-14T10:02:01.313Z"
 }
 ```
 
