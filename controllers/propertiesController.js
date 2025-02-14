@@ -52,6 +52,7 @@ function show(req, res) {
 function store(req, res) {
   const {
     title,
+    host_name,
     rooms,
     beds,
     bathrooms,
@@ -65,6 +66,7 @@ function store(req, res) {
 
   if (
     !title ||
+    !host_name ||
     !rooms ||
     !beds ||
     !bathrooms ||
@@ -82,14 +84,15 @@ function store(req, res) {
 
   const query = `
     INSERT INTO properties 
-      (title, rooms, beds, bathrooms, square_meters, contact_email, property_type, adress_city, adress_road, adress_hick_town) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+      (title, host_name, rooms, beds, bathrooms, square_meters, contact_email, property_type, adress_city, adress_road, adress_hick_town) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
   `;
 
   connection.query(
     query,
     [
       title,
+      host_name,
       rooms,
       beds,
       bathrooms,
@@ -113,6 +116,7 @@ function store(req, res) {
       const newItem = {
         properties_id: results.insertId,
         title,
+        host_name,
         rooms,
         beds,
         square_meters,
