@@ -27,15 +27,25 @@ function show(req, res) {
 
   const query = `
     SELECT p.*, 
-           JSON_ARRAYAGG(i.image_url) AS images 
-    FROM properties p
-    LEFT JOIN images i ON p.id_properties = i.properties_id
-    WHERE p.id_properties = ?
-    GROUP BY p.id_properties
+       JSON_ARRAYAGG(i.image_url) AS images,
+       JSON_ARRAYAGG(
+         JSON_OBJECT(
+           'id_review', r.id_review,
+           'review_content', r.review_content,
+           'user_name', r.user_name,
+           'create_date', r.create_date
+         )
+       ) AS reviews
+FROM properties p
+LEFT JOIN images i ON p.id_properties = i.properties_id
+LEFT JOIN reviews r ON p.id_properties = r.properties_id
+WHERE p.id_properties = ?
+GROUP BY p.id_properties
   `;
 
   connection.query(query, [id], (err, results) => {
     if (err) {
+      console.error("ErroreSQL:", err)
       return res
         .status(500)
         .json({ error: "Errore nel recupero della proprietà" });

@@ -29,6 +29,8 @@ function index(req, res) {
   });
 }
 
+
+
 function store(req, res) {
   const { id } = req.params;
   console.log("ID proprietà ricevuto:", id);
@@ -43,9 +45,9 @@ function store(req, res) {
   }
 
   const query = `
-    INSERT INTO reviews (properties_id, user_name, review_content, start_date, end_date)
-    VALUES (?, ?, ?, ?, ?)
-  `;
+    INSERT INTO reviews(properties_id, user_name, review_content, start_date, end_date)
+  VALUES(?, ?, ?, ?, ?)
+    `;
 
   connection.query(
     query,
