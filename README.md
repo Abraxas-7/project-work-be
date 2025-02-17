@@ -31,9 +31,9 @@ Assicurati di avere installato:
    PORT = [la tua porta]
 
    DB_HOST = localhost
-   DB_USER= root
-   DB_PASSWORD= [la tua password]
-   DATABASE= [il tuo database]
+   DB_USER = root
+   DB_PASSWORD = [la tua password]
+   DATABASE = [il tuo database]
    ```
 
 3. Avvia il server:
