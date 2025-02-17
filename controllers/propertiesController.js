@@ -5,7 +5,7 @@ function index(req, res) {
   const query = `
     SELECT p.*, 
            (SELECT i.image_url FROM images i WHERE i.properties_id = p.id_properties LIMIT 1) AS first_image 
-    FROM properties p
+    FROM properties p ORDER BY p.likes DESC
   `;
 
   connection.query(query, (err, results) => {
