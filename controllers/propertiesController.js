@@ -26,26 +26,38 @@ function show(req, res) {
   const { id } = req.params;
 
   const query = `
-    SELECT p.*, 
-       JSON_ARRAYAGG(i.image_url) AS images,
-       JSON_ARRAYAGG(
-         JSON_OBJECT(
-           'id_review', r.id_review,
-           'review_content', r.review_content,
-           'user_name', r.user_name,
-           'create_date', r.create_date
-         )
-       ) AS reviews
-FROM properties p
-LEFT JOIN images i ON p.id_properties = i.properties_id
-LEFT JOIN reviews r ON p.id_properties = r.properties_id
-WHERE p.id_properties = ?
-GROUP BY p.id_properties
-  `;
+  SELECT 
+    p.*, 
+    (
+      SELECT JSON_ARRAYAGG(image_url)
+      FROM (
+        SELECT DISTINCT i.image_url
+        FROM images i
+        WHERE i.properties_id = p.id_properties
+      ) AS img_sub
+    ) AS images,
+    (
+      SELECT JSON_ARRAYAGG(
+        JSON_OBJECT(
+          'id_review', rev_sub.id_review,
+          'review_content', rev_sub.review_content,
+          'user_name', rev_sub.user_name,
+          'create_date', rev_sub.create_date
+        )
+      )
+      FROM (
+        SELECT DISTINCT r.id_review, r.review_content, r.user_name, r.create_date
+        FROM reviews r
+        WHERE r.properties_id = p.id_properties
+      ) AS rev_sub
+    ) AS reviews
+  FROM properties p
+  WHERE p.id_properties = ?;
+`;
 
   connection.query(query, [id], (err, results) => {
     if (err) {
-      console.error("ErroreSQL:", err)
+      console.error("ErroreSQL:", err);
       return res
         .status(500)
         .json({ error: "Errore nel recupero della proprietà" });
