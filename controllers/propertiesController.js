@@ -49,6 +49,7 @@ function show(req, res) {
         SELECT DISTINCT r.id_review, r.review_content, r.user_name, r.create_date
         FROM reviews r
         WHERE r.properties_id = p.id_properties
+        ORDER BY r.create_date DESC
       ) AS rev_sub
     ) AS reviews
   FROM properties p
