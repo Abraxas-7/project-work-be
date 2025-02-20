@@ -55,7 +55,8 @@ function show(req, res) {
       ) AS rev_sub
     ) AS reviews
   FROM properties p
-  WHERE p.id_properties = ?;
+  WHERE p.id_properties = ?
+  ORDER BY p.likes DESC;
 `;
 
   connection.query(query, [id], (err, results) => {
