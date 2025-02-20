@@ -42,11 +42,13 @@ function show(req, res) {
           'id_review', rev_sub.id_review,
           'review_content', rev_sub.review_content,
           'user_name', rev_sub.user_name,
-          'create_date', rev_sub.create_date
+          'create_date', rev_sub.create_date,
+          'start_date', rev_sub.start_date,
+      'end_date', rev_sub.end_date
         )
       )
       FROM (
-        SELECT DISTINCT r.id_review, r.review_content, r.user_name, r.create_date
+        SELECT DISTINCT r.id_review, r.review_content, r.user_name, r.create_date, r.start_date, r.end_date
         FROM reviews r
         WHERE r.properties_id = p.id_properties
         ORDER BY r.create_date DESC
