@@ -88,6 +88,7 @@ function store(req, res) {
     adress_city,
     adress_road,
     adress_hick_town,
+    property_description,
   } = req.body;
 
   if (
@@ -101,7 +102,8 @@ function store(req, res) {
     !property_type ||
     !adress_city ||
     !adress_road ||
-    !adress_hick_town
+    !adress_hick_town ||
+    !property_description
   ) {
     return res.status(400).json({
       error: "Tutti i campi sono obbligatori",
@@ -110,8 +112,8 @@ function store(req, res) {
 
   const query = `
     INSERT INTO properties 
-      (title, host_name, rooms, beds, bathrooms, square_meters, contact_email, property_type, adress_city, adress_road, adress_hick_town) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+      (title, host_name, rooms, beds, bathrooms, square_meters, contact_email, property_type, adress_city, adress_road, adress_hick_town, property_description) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
   `;
 
   connection.query(
@@ -128,6 +130,7 @@ function store(req, res) {
       adress_city,
       adress_road,
       adress_hick_town,
+      property_description,
     ],
     (err, results) => {
       if (err) {
@@ -152,6 +155,7 @@ function store(req, res) {
         adress_city,
         adress_road,
         adress_hick_town,
+        property_description,
       };
 
       res.status(201).json(newItem);
