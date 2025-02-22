@@ -1,5 +1,7 @@
 const connection = require("../data/db");
 const CustomError = require("../classes/CustomError");
+const slugify = require("slugify");
+const diacritics = require("diacritics");
 
 function index(req, res) {
   const query = `
@@ -110,56 +112,80 @@ function store(req, res) {
     });
   }
 
-  const query = `
-    INSERT INTO properties 
-      (title, host_name, rooms, beds, bathrooms, square_meters, contact_email, property_type, adress_city, adress_road, adress_hick_town, property_description) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
-  `;
+  let slug = slugify(diacritics.remove(title), {
+    lower: true,
+    strict: true,
+  });
 
-  connection.query(
-    query,
-    [
-      title,
-      host_name,
-      rooms,
-      beds,
-      bathrooms,
-      square_meters,
-      contact_email,
-      property_type,
-      adress_city,
-      adress_road,
-      adress_hick_town,
-      property_description,
-    ],
-    (err, results) => {
-      if (err) {
-        console.error("Errore di query:", err);
-        return res
-          .status(500)
-          .json(
-            new CustomError("Errore durante l'inserimento del messaggio", 500)
-          );
-      }
+  const checkSlugQuery =
+    "SELECT COUNT(*) AS count FROM properties WHERE slug = ?";
 
-      const newItem = {
-        properties_id: results.insertId,
+  connection.query(checkSlugQuery, [slug], (err, results) => {
+    if (err) {
+      console.error("Errore di query:", err);
+      return res.status(500).json({
+        error: "Errore durante il controllo dello slug",
+      });
+    }
+
+    if (results[0].count > 0) {
+      slug = `${slug}-${Date.now()}`;
+    }
+
+    const query = `
+      INSERT INTO properties 
+        (title, slug, host_name, rooms, beds, bathrooms, square_meters, contact_email, property_type, adress_city, adress_road, adress_hick_town, property_description) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+    `;
+
+    connection.query(
+      query,
+      [
         title,
+        slug,
         host_name,
         rooms,
         beds,
+        bathrooms,
         square_meters,
         contact_email,
         property_type,
-        likes: 0,
         adress_city,
         adress_road,
         adress_hick_town,
         property_description,
-      };
+      ],
+      (err, results) => {
+        if (err) {
+          console.error("Errore di query:", err);
+          return res
+            .status(500)
+            .json(
+              new CustomError("Errore durante l'inserimento del messaggio", 500)
+            );
+        }
 
-      res.status(201).json(newItem);
-    }
-  );
+        const newItem = {
+          properties_id: results.insertId,
+          title,
+          slug,
+          host_name,
+          rooms,
+          beds,
+          square_meters,
+          contact_email,
+          property_type,
+          likes: 0,
+          adress_city,
+          adress_road,
+          adress_hick_town,
+          property_description,
+        };
+
+        res.status(201).json(newItem);
+      }
+    );
+  });
 }
+
 module.exports = { index, show, store };
