@@ -61,9 +61,68 @@ function show(req, res) {
   ORDER BY p.likes DESC;
 `;
 
+
+
   connection.query(query, [id], (err, results) => {
     if (err) {
       console.error("ErroreSQL:", err);
+      return res
+        .status(500)
+        .json({ error: "Errore nel recupero della proprietà" });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ error: "Proprietà non trovata" });
+    }
+
+    res.json({ success: true, item: results[0] });
+  });
+}
+
+function showSlug(req, res) {
+  const { slug } = req.params;
+
+  console.log('Slug ricevuto:', slug); // Log per debugging
+
+  const query = `
+    SELECT 
+      p.*, 
+      (
+        SELECT JSON_ARRAYAGG(image_url)
+        FROM (
+          SELECT DISTINCT i.image_url
+          FROM images i
+          WHERE i.properties_id = p.id_properties
+        ) AS img_sub
+      ) AS images,
+      (
+        SELECT JSON_ARRAYAGG(
+          JSON_OBJECT(
+            'id_review', rev_sub.id_review,
+            'review_content', rev_sub.review_content,
+            'user_name', rev_sub.user_name,
+            'create_date', rev_sub.create_date,
+            'start_date', rev_sub.start_date,
+            'end_date', rev_sub.end_date
+          )
+        )
+        FROM (
+          SELECT DISTINCT r.id_review, r.review_content, r.user_name, r.create_date, r.start_date, r.end_date
+          FROM reviews r
+          WHERE r.properties_id = p.id_properties
+          ORDER BY r.create_date DESC
+        ) AS rev_sub
+      ) AS reviews
+    FROM properties p
+    WHERE slug = ?
+    ORDER BY p.likes DESC;
+  `;
+
+  console.log("Query eseguita:", query, "con slug:", slug); // Log per vedere la query
+
+  connection.query(query, [slug], (err, results) => {
+    if (err) {
+      console.error("Errore SQL:", err);
       return res
         .status(500)
         .json({ error: "Errore nel recupero della proprietà" });
@@ -188,4 +247,4 @@ function store(req, res) {
   });
 }
 
-module.exports = { index, show, store };
+module.exports = { index, show, store , showSlug};
